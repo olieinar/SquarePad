@@ -1,0 +1,33 @@
+# Node / frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Wails / app build output
+build/
+build/bin/
+wailsjs/
+frontend/wailsjs/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Go
+bin/
+*.test
+coverage.out
+
+# Logs and temp files
+*.log
+*.tmp
+*.temp
+
+# Editor / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo

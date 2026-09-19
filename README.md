@@ -1,0 +1,50 @@
+# SquarePad
+
+SquarePad is a desktop app for turning rectangular images into square images by padding them with a transparent, white, or custom background color.
+
+## Features
+
+- Drag and drop files or folders
+- Select multiple images at once
+- Keep the original image centered without cropping
+- Export square images with transparent, white, or custom backgrounds
+- Preserve EXIF orientation when supported
+- Generate unique output filenames to avoid overwrites
+- Process multiple files with progress feedback
+
+## Supported inputs
+
+- JPG / JPEG / JFIF
+- PNG
+- WebP
+- BMP / TIFF
+- GIF
+- AVIF
+
+## Requirements
+
+- Go 1.25.0
+- Node.js and npm
+- Wails v2 CLI
+
+Install Wails:
+
+```bash
+go install github.com/wailsapp/wails/v2/cmd/wails@latest
+```
+
+## Run locally
+
+```bash
+wails dev -tags nodynamic
+```
+
+## Build
+
+```bash
+wails build -clean -tags nodynamic
+```
+
+## Contributing
+
+Contributions are welcome. Open an issue or submit a pull request with a clear description of the change.
