@@ -1,8 +1,5 @@
 import { Dispatch, SetStateAction, useCallback, useState } from "react";
-import {
-  ExpandPaths,
-  SuggestedOutputFolder,
-} from "../../wailsjs/go/main/App";
+import { App as SquarePad } from "../../bindings/squarepad";
 import { ProgressEvent, ProcessResult } from "../types";
 
 type UseImageSelectionOptions = {
@@ -31,14 +28,14 @@ export function useImageSelection({
     async (incoming: string[]) => {
       if (!incoming?.length) return;
       try {
-        const expanded = await ExpandPaths(incoming, recursive);
+        const expanded = await SquarePad.ExpandPaths(incoming, recursive);
         if (!expanded.length) {
           setStatus("No new supported images were added.");
           return;
         }
 
         const known = new Set(paths.map((item) => item.toLocaleLowerCase()));
-        const additions = expanded.filter((item) => {
+        const additions = expanded.filter((item: string) => {
           const key = item.toLocaleLowerCase();
           if (known.has(key)) return false;
           known.add(key);
@@ -47,7 +44,7 @@ export function useImageSelection({
         if (additions.length) setPaths([...paths, ...additions]);
 
         if (!outputFolder) {
-          const suggested = await SuggestedOutputFolder(expanded[0]);
+          const suggested = await SquarePad.SuggestedOutputFolder(expanded[0]);
           if (suggested) setOutputFolder(suggested);
         }
         setResult(null);

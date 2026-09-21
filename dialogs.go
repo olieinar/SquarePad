@@ -5,20 +5,16 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 func (a *App) SelectImages() ([]string, error) {
-	paths, err := runtime.OpenMultipleFilesDialog(a.ctx, runtime.OpenDialogOptions{
-		Title: "Choose images",
-		Filters: []runtime.FileFilter{
-			{
-				DisplayName: "Supported images",
-				Pattern:     "*.jpg;*.jpeg;*.jpe;*.jfif;*.png;*.webp;*.bmp;*.dib;*.tif;*.tiff;*.gif;*.avif",
-			},
-			{DisplayName: "All files", Pattern: "*.*"},
-		},
-	})
+	paths, err := application.Get().Dialog.OpenFile().
+		SetTitle("Choose images").
+		CanChooseFiles(true).
+		AddFilter("Supported images", "*.jpg;*.jpeg;*.jpe;*.jfif;*.png;*.webp;*.bmp;*.dib;*.tif;*.tiff;*.gif;*.avif").
+		AddFilter("All files", "*.*").
+		PromptForMultipleSelection()
 	if err != nil {
 		return nil, err
 	}
@@ -26,13 +22,16 @@ func (a *App) SelectImages() ([]string, error) {
 }
 
 func (a *App) SelectOutputFolder(current string) (string, error) {
-	options := runtime.OpenDialogOptions{Title: "Choose output folder"}
+	dialog := application.Get().Dialog.OpenFile().
+		SetTitle("Choose output folder").
+		CanChooseDirectories(true).
+		CanChooseFiles(false)
 	if current != "" {
 		if info, err := os.Stat(current); err == nil && info.IsDir() {
-			options.DefaultDirectory = current
+			dialog.SetDirectory(current)
 		}
 	}
-	return runtime.OpenDirectoryDialog(a.ctx, options)
+	return dialog.PromptForSingleSelection()
 }
 
 func (a *App) SuggestedOutputFolder(sourcePath string) string {

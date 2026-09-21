@@ -1,0 +1,15 @@
+version: '3'
+
+vars:
+  APP_NAME: SquarePad
+  BIN_DIR: bin
+  APP_VERSION: "1.0.0"
+
+tasks:
+  build:
+    desc: Build SquarePad for Windows
+    cmds:
+      - cmd: npm install --prefix frontend
+      - cmd: wails3 generate bindings -ts
+      - cmd: npm run build --prefix frontend
+      - cmd: go build -ldflags "-X main.currentVersion={{.APP_VERSION}}" -o {{.BIN_DIR}}/{{.APP_NAME}}.exe .

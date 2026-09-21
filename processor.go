@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 func (a *App) ProcessImages(paths []string, outputFolder string, padding string, options ProcessingOptions) (ProcessResult, error) {
@@ -47,7 +47,7 @@ func (a *App) ProcessImages(paths []string, outputFolder string, padding string,
 			Name:    filepath.Base(sourcePath),
 			Percent: index * 100 / len(paths),
 		}
-		runtime.EventsEmit(a.ctx, "processing:progress", progress)
+		application.Get().Event.Emit("processing:progress", progress)
 
 		outputPath, err := outputPathFor(outputFolder, sourcePath, paths, options)
 		if err == nil {
@@ -60,7 +60,7 @@ func (a *App) ProcessImages(paths []string, outputFolder string, padding string,
 		}
 
 		progress.Percent = (index + 1) * 100 / len(paths)
-		runtime.EventsEmit(a.ctx, "processing:progress", progress)
+		application.Get().Event.Emit("processing:progress", progress)
 	}
 
 	return result, nil

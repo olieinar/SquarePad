@@ -6,8 +6,9 @@ frontend/.vite/
 # Wails / app build output
 build/
 build/bin/
-wailsjs/
-frontend/wailsjs/
+!build/
+!build/config.yml
+frontend/bindings/
 *.exe
 *.dll
 *.so

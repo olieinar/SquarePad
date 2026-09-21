@@ -25,24 +25,24 @@ SquarePad is a desktop app for turning rectangular images into square images by 
 
 - Go 1.25.0
 - Node.js and npm
-- Wails v2 CLI
+- Wails v3 CLI
 
 Install Wails:
 
 ```bash
-go install github.com/wailsapp/wails/v2/cmd/wails@latest
+go install github.com/wailsapp/wails/v3/cmd/wails3@latest
 ```
 
 ## Run locally
 
 ```bash
-wails dev -tags nodynamic
+wails3 dev
 ```
 
 ## Build
 
 ```bash
-wails build -clean -tags nodynamic
+wails3 build
 ```
 
 ## Contributing

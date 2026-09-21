@@ -1,7 +1,5 @@
 package main
 
-import "context"
-
 var supportedExtensions = map[string]struct{}{
 	".jpg":  {},
 	".jpeg": {},
@@ -18,7 +16,6 @@ var supportedExtensions = map[string]struct{}{
 }
 
 type App struct {
-	ctx context.Context
 }
 
 type ProgressEvent struct {

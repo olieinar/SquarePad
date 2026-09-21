@@ -1,0 +1,19 @@
+info:
+  productName: "SquarePad"
+  productIdentifier: "com.squarepad.app"
+  productVersion: "1.0.0"
+  companyName: ""
+  description: "Add padding to images without cropping"
+  copyright: ""
+  comments: "Built with Wails"
+  version: "1.0.0"
+
+dev_mode:
+  root_path: .
+  executes:
+    - cmd: npm install --prefix frontend
+      type: once
+    - cmd: npm run dev --prefix frontend
+      type: background
+    - cmd: go run .
+      type: primary

@@ -1,15 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Settings } from "lucide-react";
-import {
-  ProcessImages,
-  SelectImages,
-  SelectOutputFolder,
-} from "../wailsjs/go/main/App";
-import {
-  EventsOn,
-  OnFileDrop,
-  OnFileDropOff,
-} from "../wailsjs/runtime/runtime";
+import { App as SquarePad } from "../bindings/squarepad";
+import { Events } from "@wailsio/runtime";
 import { BackgroundControls } from "./components/BackgroundControls";
 import { ImageList } from "./components/ImageList";
 import { OutputFolderField } from "./components/OutputFolderField";
@@ -80,12 +72,13 @@ function App() {
   }, [settingsOpen]);
 
   useEffect(() => {
-    OnFileDrop((_x, _y, droppedPaths) => {
+    const stopFileDrop = Events.On("files-dropped", (event) => {
       setDragging(false);
-      void addPaths(droppedPaths);
-    }, false);
+      void addPaths(event.data as string[]);
+    });
 
-    const stopProgress = EventsOn("processing:progress", (payload: ProgressEvent) => {
+    const stopProgress = Events.On("processing:progress", (event) => {
+      const payload = event.data as ProgressEvent;
       setProgress(payload);
       setStatus(`Processing ${payload.index} of ${payload.total}: ${payload.name}`);
     });
@@ -98,7 +91,7 @@ function App() {
 
     return () => {
       stopProgress();
-      OnFileDropOff();
+      stopFileDrop();
       window.removeEventListener("dragenter", dragEnter);
       window.removeEventListener("dragleave", dragLeave);
       window.removeEventListener("drop", dragLeave);
@@ -107,7 +100,7 @@ function App() {
 
   const chooseImages = async () => {
     try {
-      const chosen = await SelectImages();
+      const chosen = await SquarePad.SelectImages();
       await addPaths(chosen);
     } catch (cause) {
       setError(String(cause));
@@ -116,7 +109,7 @@ function App() {
 
   const chooseOutput = async () => {
     try {
-      const folder = await SelectOutputFolder(outputFolder);
+      const folder = await SquarePad.SelectOutputFolder(outputFolder);
       if (folder) setOutputFolder(folder);
     } catch (cause) {
       setError(String(cause));
@@ -139,7 +132,7 @@ function App() {
     setProgress({ index: 1, total: paths.length, name: filename(paths[0]), percent: 0 });
 
     try {
-      const response = (await ProcessImages(
+      const response = (await SquarePad.ProcessImages(
         paths,
         outputFolder,
         padding,
