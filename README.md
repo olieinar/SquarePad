@@ -1,4 +1,4 @@
-# SquarePad
+<h1 align="center" style="font-size: 64px; line-height: 64px;"> <img src="https://raw.githubusercontent.com/olieinar/SquarePad/refs/heads/main/build/appicon.png" alt="SquarePad App Icon" height="84" align="middle" /> SquarePad </h1>
 
 SquarePad is a desktop app for turning rectangular images into square images by padding them with a transparent, white, or custom background color.
 
