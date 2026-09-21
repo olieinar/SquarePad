@@ -11,9 +11,9 @@ info:
 dev_mode:
   root_path: .
   executes:
-    - cmd: npm install --prefix frontend
+    - cmd: cd frontend && npm install
       type: once
-    - cmd: npm run dev --prefix frontend
+    - cmd: cd frontend && npm run dev
       type: background
     - cmd: go run .
       type: primary

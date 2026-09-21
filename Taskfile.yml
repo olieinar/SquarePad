@@ -9,7 +9,7 @@ tasks:
   build:
     desc: Build SquarePad for Windows
     cmds:
-      - cmd: npm install --prefix frontend
+      - cmd: cd frontend && npm ci
       - cmd: wails3 generate bindings -ts
-      - cmd: npm run build --prefix frontend
+      - cmd: cd frontend && npm run build
       - cmd: go build -ldflags "-X main.currentVersion={{.APP_VERSION}}" -o {{.BIN_DIR}}/{{.APP_NAME}}.exe .
