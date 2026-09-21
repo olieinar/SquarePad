@@ -12,4 +12,6 @@ tasks:
       - cmd: cd frontend && npm ci
       - cmd: wails3 generate bindings -ts
       - cmd: cd frontend && npm run build
+      - defer: powershell -NoProfile -Command "Remove-Item -Force -ErrorAction SilentlyContinue 'wails_windows_amd64.syso'"
+      - cmd: wails3 generate syso -arch amd64 -icon build/windows/icon.ico -manifest build/windows/wails.exe.manifest -info build/windows/info.json -out wails_windows_amd64.syso
       - cmd: go build -ldflags "-H=windowsgui -X main.currentVersion={{.APP_VERSION}}" -o {{.BIN_DIR}}/{{.APP_NAME}}.exe .
