@@ -14,6 +14,8 @@ import (
 
 	"github.com/disintegration/imaging"
 	"github.com/gen2brain/avif"
+
+	_ "golang.org/x/image/webp"
 )
 
 func makeSquare(sourcePath, outputPath, padding string, options ProcessingOptions) error {

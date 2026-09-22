@@ -1,6 +1,7 @@
 export type Padding = "transparent" | "white";
 export type Theme = "system" | "light" | "dark";
 export type OutputFormat = "png" | "jpeg";
+export type FileStatus = "pending" | "processing" | "done" | "failed";
 
 export type ProcessingOptions = {
   outputFormat: OutputFormat;
@@ -14,8 +15,18 @@ export type ProcessingOptions = {
 export type ProgressEvent = {
   index: number;
   total: number;
+  path: string;
   name: string;
   percent: number;
+  status: FileStatus;
+  error?: string;
+  outputPath?: string;
+};
+
+export type FileState = {
+  status: FileStatus;
+  error?: string;
+  outputPath?: string;
 };
 
 export type FailedImage = {

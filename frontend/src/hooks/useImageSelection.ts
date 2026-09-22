@@ -75,7 +75,7 @@ export function useImageSelection({
     setPaths((current) => current.filter((path) => !selected.has(path)));
     setSelected(new Set());
     setResult(null);
-    setProgress({ index: 0, total: 0, name: "", percent: 0 });
+    setProgress({ index: 0, total: 0, path: "", name: "", percent: 0, status: "pending", });
     setStatus(`${Math.max(0, paths.length - selected.size)} image(s) selected.`);
   }, [paths.length, selected, setProgress, setResult, setStatus]);
 
@@ -84,7 +84,7 @@ export function useImageSelection({
     setSelected(new Set());
     setResult(null);
     setError("");
-    setProgress({ index: 0, total: 0, name: "", percent: 0 });
+    setProgress({ index: 0, total: 0, path: "", name: "", percent: 0, status: "pending", });
     setStatus("Choose or drop images to begin.");
   }, [setError, setProgress, setResult, setStatus]);
 

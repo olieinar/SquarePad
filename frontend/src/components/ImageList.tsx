@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
-import { Plus } from "lucide-react";
-import { HoverPreview } from "../types";
+import { Plus, CheckCircle2, LoaderCircle, CircleAlert, RotateCcw } from "lucide-react";
+import { HoverPreview, FileState } from "../types";
 
 function filename(path: string) {
   const parts = path.replaceAll("\\", "/").split("/");
@@ -19,6 +19,8 @@ type ImageListProps = {
   onToggle: (path: string) => void;
   onRemove: () => void;
   onClear: () => void;
+  fileStates: Record<string, FileState>;
+  onReAdd: (path: string) => void;
 };
 
 export function ImageList({
@@ -28,14 +30,19 @@ export function ImageList({
   busy,
   dragging,
   hoverPreview,
+  fileStates,
   setHoverPreview,
   onChoose,
   onToggle,
   onRemove,
   onClear,
+  onReAdd,
 }: ImageListProps) {
   return (
-    <section className={`drop-panel ${dragging ? "is-dragging" : ""}`}>
+    <section
+      className={`drop-panel ${dragging ? "is-dragging" : ""}`}
+      data-file-drop-target="true"
+    >
       <div className="drop-heading">
         <div><h2>{dragging ? "Drop them here" : "Images"}</h2></div>
         <span className="count-badge">{paths.length}</span>
@@ -61,6 +68,19 @@ export function ImageList({
                 onChange={() => onToggle(path)}
                 disabled={busy}
               />
+              <span className="file-status">
+                {fileStates[path]?.status === "done" && (
+                  <CheckCircle2 size={18} color="green" />
+                )}
+
+                {fileStates[path]?.status === "processing" && (
+                  <LoaderCircle size={18} className="spin" />
+                )}
+
+                {fileStates[path]?.status === "failed" && (
+                  <CircleAlert size={18} color="red" />
+                )}
+              </span>
               <span
                 className="file-icon"
                 onMouseEnter={(event) =>
@@ -80,6 +100,15 @@ export function ImageList({
               <span className="file-copy">
                 <strong>{filename(path)}</strong>
                 <small>{path}</small>
+              </span>
+              <span className="file-action">
+                {fileStates[path]?.status === "done" && (
+                  <span className="file-action-readd">
+                    <RotateCcw 
+                      size={18} 
+                      onClick={() => onReAdd(path)} />
+                  </span>
+                )}
               </span>
             </label>
           ))

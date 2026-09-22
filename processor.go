@@ -44,19 +44,32 @@ func (a *App) ProcessImages(paths []string, outputFolder string, padding string,
 		progress := ProgressEvent{
 			Index:   index + 1,
 			Total:   len(paths),
+			Path:    sourcePath,
 			Name:    filepath.Base(sourcePath),
 			Percent: index * 100 / len(paths),
+			Status:  "processing",
 		}
+
 		application.Get().Event.Emit("processing:progress", progress)
 
 		outputPath, err := outputPathFor(outputFolder, sourcePath, paths, options)
 		if err == nil {
 			err = makeSquare(sourcePath, outputPath, padding, options)
 		}
+
 		if err != nil {
-			result.Failed = append(result.Failed, FailedImage{Path: sourcePath, Error: err.Error()})
+			result.Failed = append(result.Failed, FailedImage{
+				Path:  sourcePath,
+				Error: err.Error(),
+			})
+
+			progress.Status = "failed"
+			progress.Error = err.Error()
 		} else {
 			result.Processed++
+
+			progress.Status = "done"
+			progress.OutputPath = outputPath
 		}
 
 		progress.Percent = (index + 1) * 100 / len(paths)

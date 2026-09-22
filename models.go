@@ -19,10 +19,14 @@ type App struct {
 }
 
 type ProgressEvent struct {
-	Index   int    `json:"index"`
-	Total   int    `json:"total"`
-	Name    string `json:"name"`
-	Percent int    `json:"percent"`
+    Index      int    `json:"index"`
+    Total      int    `json:"total"`
+    Path       string `json:"path"`
+    Name       string `json:"name"`
+    Percent    int    `json:"percent"`
+    Status     string `json:"status"`
+    Error      string `json:"error,omitempty"`
+    OutputPath string `json:"outputPath,omitempty"`
 }
 
 type FailedImage struct {

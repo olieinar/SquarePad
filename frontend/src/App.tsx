@@ -10,7 +10,7 @@ import { SettingsModal } from "./components/SettingsModal";
 import { useImageSelection } from "./hooks/useImageSelection";
 import { useImagePreviews } from "./hooks/useImagePreviews";
 import { useTheme } from "./hooks/useTheme";
-import { HoverPreview, Padding, ProcessResult, ProcessingOptions, ProgressEvent, Theme } from "./types";
+import { HoverPreview, Padding, ProcessResult, ProcessingOptions, ProgressEvent, Theme, FileState } from "./types";
 
 function filename(path: string) {
   const parts = path.replaceAll("\\", "/").split("/");
@@ -34,8 +34,10 @@ function App() {
   const [progress, setProgress] = useState<ProgressEvent>({
     index: 0,
     total: 0,
+    path: "",
     name: "",
     percent: 0,
+    status: "pending",
   });
   const [status, setStatus] = useState("Choose or drop images to begin.");
   const [result, setResult] = useState<ProcessResult | null>(null);
@@ -43,6 +45,7 @@ function App() {
   const [dragging, setDragging] = useState(false);
   const [hoverPreview, setHoverPreview] = useState<HoverPreview | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [fileStates, setFileStates] = useState<Record<string, FileState>>({});
 
   const {
     paths,
@@ -79,8 +82,21 @@ function App() {
 
     const stopProgress = Events.On("processing:progress", (event) => {
       const payload = event.data as ProgressEvent;
+
       setProgress(payload);
-      setStatus(`Processing ${payload.index} of ${payload.total}: ${payload.name}`);
+
+      setFileStates((current) => ({
+        ...current,
+        [payload.path]: {
+          status: payload.status,
+          error: payload.error,
+          outputPath: payload.outputPath,
+        },
+      }));
+
+      setStatus(
+        `Processing ${payload.index} of ${payload.total}: ${payload.name}`
+      );
     });
 
     const dragEnter = () => setDragging(true);
@@ -117,35 +133,56 @@ function App() {
   };
 
   const processImages = async () => {
-    if (!paths.length) {
-      setError("Choose or drop at least one image first.");
+    const queuedPaths = paths.filter(
+      (path) => fileStates[path]?.status !== "done"
+    );
+
+    if (!queuedPaths.length) {
+      setStatus("All images have already been processed.");
       return;
     }
+
     if (!outputFolder.trim()) {
       setError("Choose an output folder first.");
       return;
     }
 
+    const nextFileStates = { ...fileStates };
+
+    for (const path of queuedPaths) {
+      nextFileStates[path] = {
+        status: "pending",
+      };
+    }
+
+    setFileStates(nextFileStates);
+
     setBusy(true);
     setError("");
     setResult(null);
-    setProgress({ index: 1, total: paths.length, name: filename(paths[0]), percent: 0 });
+
+    setProgress({
+      index: 1,
+      total: queuedPaths.length,
+      path: queuedPaths[0],
+      name: filename(queuedPaths[0]),
+      percent: 0,
+      status: "processing",
+    });
 
     try {
       const response = (await SquarePad.ProcessImages(
-        paths,
+        queuedPaths,
         outputFolder,
         padding,
         processingOptions,
       )) as ProcessResult;
+
       setResult(response);
-      setProgress({
-        index: paths.length,
-        total: paths.length,
-        name: "",
-        percent: 100,
-      });
-      setStatus(`Finished: ${response.processed} processed, ${response.failed.length} failed.`);
+
+      setStatus(
+        `Finished: ${response.processed} processed, ${response.failed.length} failed.`,
+      );
     } catch (cause) {
       setError(String(cause));
       setStatus("Processing stopped.");
@@ -164,6 +201,16 @@ function App() {
     () => "JPG · JFIF · PNG · WebP · BMP · TIFF · GIF · AVIF",
     [],
   );
+
+  const handleReAdd = (path: string) => {
+    setFileStates(prevState => ({
+      ...prevState,
+      [path]: {
+        ...prevState[path],
+        status: "pending"
+      }
+    }));
+  };
 
   return (
     <main className="app-shell">
@@ -204,11 +251,13 @@ function App() {
         busy={busy}
         dragging={dragging}
         hoverPreview={hoverPreview}
+        fileStates={fileStates}
         setHoverPreview={setHoverPreview}
         onChoose={chooseImages}
         onToggle={toggleSelected}
         onRemove={removeSelected}
         onClear={clearImages}
+        onReAdd={handleReAdd}
       />
 
       <section className="options-panel">
