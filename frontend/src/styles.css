@@ -199,11 +199,14 @@ p { margin: 5px 0 0; color: #9299a8; font-size: 13px; }
 .file-action {
   width: 30px;
   height: 30px;
-  position: absolute;
-  right: 50px;
+
+  flex: 0 0 30px;
+  margin-left: auto;
+
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .file-action-readd {
