@@ -7,6 +7,9 @@ type SettingsModalProps = {
   setTheme: Dispatch<SetStateAction<Theme>>;
   processingOptions: ProcessingOptions;
   setProcessingOptions: Dispatch<SetStateAction<ProcessingOptions>>;
+  defaultOutputFolder: string;
+  onBrowseDefaultOutputFolder: () => void;
+  onClearDefaultOutputFolder: () => void;
   recursive: boolean;
   setRecursive: Dispatch<SetStateAction<boolean>>;
   onClose: () => void;
@@ -17,6 +20,9 @@ export function SettingsModal({
   setTheme,
   processingOptions,
   setProcessingOptions,
+  defaultOutputFolder,
+  onBrowseDefaultOutputFolder,
+  onClearDefaultOutputFolder,
   recursive,
   setRecursive,
   onClose,
@@ -64,6 +70,26 @@ export function SettingsModal({
         </div>
 
         <div className="settings-grid">
+          <label className="setting-field setting-field-wide">
+            <span>Default output folder</span>
+            <div className="setting-path-row">
+              <input
+                type="text"
+                value={defaultOutputFolder}
+                placeholder="No default folder selected"
+                readOnly
+                title={defaultOutputFolder}
+              />
+              <button className="secondary" onClick={onBrowseDefaultOutputFolder}>
+                Browse...
+              </button>
+              {defaultOutputFolder && (
+                <button className="secondary" onClick={onClearDefaultOutputFolder}>
+                  Clear
+                </button>
+              )}
+            </div>
+          </label>
           <label className="setting-field">
             <span>Output format</span>
             <select

@@ -25,11 +25,12 @@ function App() {
     quality: 90,
     overwrite: false,
     preserveStructure: false,
-    background: "padding",
+    background: "white",
     maxSize: 0,
   });
-  const [padding, setPadding] = useState<Padding>("transparent");
+  const [padding, setPadding] = useState<Padding>("white");
   const [outputFolder, setOutputFolder] = useState("");
+  const [defaultOutputFolder, setDefaultOutputFolder] = useState("");
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<ProgressEvent>({
     index: 0,
@@ -64,6 +65,22 @@ function App() {
     setProgress,
   });
   const previewUrls = useImagePreviews(paths);
+
+  useEffect(() => {
+    let active = true;
+    void SquarePad.GetDefaultOutputFolder()
+      .then((folder) => {
+        if (!active) return;
+        setDefaultOutputFolder(folder);
+        if (folder) setOutputFolder((current) => current || folder);
+      })
+      .catch((cause) => {
+        if (active) setError(String(cause));
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!settingsOpen) return;
@@ -127,6 +144,28 @@ function App() {
     try {
       const folder = await SquarePad.SelectOutputFolder(outputFolder);
       if (folder) setOutputFolder(folder);
+    } catch (cause) {
+      setError(String(cause));
+    }
+  };
+
+  const chooseDefaultOutput = async () => {
+    try {
+      const folder = await SquarePad.SelectOutputFolder(defaultOutputFolder);
+      if (!folder) return;
+      await SquarePad.SetDefaultOutputFolder(folder);
+      setDefaultOutputFolder(folder);
+      setOutputFolder(folder);
+    } catch (cause) {
+      setError(String(cause));
+    }
+  };
+
+  const clearDefaultOutput = async () => {
+    try {
+      await SquarePad.SetDefaultOutputFolder("");
+      setDefaultOutputFolder("");
+      setOutputFolder((current) => current === defaultOutputFolder ? "" : current);
     } catch (cause) {
       setError(String(cause));
     }
@@ -238,6 +277,9 @@ function App() {
           setTheme={setTheme}
           processingOptions={processingOptions}
           setProcessingOptions={setProcessingOptions}
+          defaultOutputFolder={defaultOutputFolder}
+          onBrowseDefaultOutputFolder={chooseDefaultOutput}
+          onClearDefaultOutputFolder={clearDefaultOutput}
           recursive={recursive}
           setRecursive={setRecursive}
           onClose={() => setSettingsOpen(false)}

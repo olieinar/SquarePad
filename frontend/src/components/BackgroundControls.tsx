@@ -22,16 +22,6 @@ export function BackgroundControls({
       <span className="option-label">Background</span>
       <div className="segmented background-segmented">
         <button
-          className={backgroundMode === "transparent" ? "active" : ""}
-          onClick={() => {
-            setPadding("transparent");
-            setProcessingOptions((current) => ({ ...current, background: "transparent" }));
-          }}
-          disabled={busy}
-        >
-          Transparent
-        </button>
-        <button
           className={backgroundMode === "white" ? "active" : ""}
           onClick={() => {
             setPadding("white");
@@ -40,6 +30,16 @@ export function BackgroundControls({
           disabled={busy}
         >
           White
+        </button>
+        <button
+          className={backgroundMode === "transparent" ? "active" : ""}
+          onClick={() => {
+            setPadding("transparent");
+            setProcessingOptions((current) => ({ ...current, background: "transparent" }));
+          }}
+          disabled={busy}
+        >
+          Transparent
         </button>
         <button
           className={backgroundMode === "custom" ? "active" : ""}

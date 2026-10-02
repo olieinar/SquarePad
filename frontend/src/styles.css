@@ -153,6 +153,12 @@ p { margin: 5px 0 0; color: #9299a8; font-size: 13px; }
   width: 100%; min-width: 0; border: 1px solid var(--border); outline: none;
   border-radius: 7px; background: var(--input-bg); color: var(--text); padding: 7px 8px; font-size: 11px;
 }
+.setting-path-row { display: flex; min-width: 0; gap: 6px; }
+.setting-path-row input {
+  flex: 1; min-width: 0; border: 1px solid var(--border); border-radius: 7px;
+  background: var(--input-bg); color: var(--text); padding: 7px 8px; font-size: 11px;
+}
+.setting-path-row button { flex: 0 0 auto; }
 .setting-field select:focus, .setting-field input[type="number"]:focus { border-color: #697eea; }
 .background-segmented { width: fit-content; }
 .color-picker { width: 42px; height: 30px; padding: 2px; border: 1px solid var(--border); border-radius: 7px; background: var(--input-bg); }
